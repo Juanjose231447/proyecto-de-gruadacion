@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foro - Energía Solar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <h1>Foro Comunitario de Energía Solar</h1>
+</header>
+
+<div class="container">
+
+    <aside class="sidebar">
+        <h3>Navegación</h3>
+
+        <a href="index.html">Inicio</a>
+        <a href="#publicar">Publicar</a>
+        <a href="#mensajes">Mensajes</a>
+    </aside>
+
+    <main class="content">
+
+        <div class="infobox">
+            <h3>Foro Solar</h3>
+            <p><strong>Tema:</strong> Energía Solar</p>
+            <p><strong>Tipo:</strong> Debate público</p>
+        </div>
+
+        <section id="publicar">
+            <h2>Publicar mensaje</h2>
+
+            <input type="text" id="usuario" placeholder="Tu nombre">
+
+            <br><br>
+
+            <textarea id="mensaje" rows="5" placeholder="Escribe tu opinión sobre la energía solar..."></textarea>
+
+            <br><br>
+
+            <button onclick="publicar()">Publicar</button>
+            <button onclick="window.location.href='index.html'">Volver</button>
+        </section>
+
+        <section id="mensajes">
+            <h2>Mensajes del foro</h2>
+
+            <div id="foro"></div>
+        </section>
+
+    </main>
+</div>
+
+<footer>
+    <p>Foro comunitario - Energía Solar</p>
+</footer>
+
+<script>
+
+function cargarMensajes() {
+
+    const mensajes = JSON.parse(localStorage.getItem("foroSolar")) || [];
+    const foro = document.getElementById("foro");
+
+    foro.innerHTML = "";
+
+    mensajes.forEach((msg, i) => {
+
+        foro.innerHTML += `
+            <div class="mensaje-foro">
+                <h3>${msg.usuario}</h3>
+                <p>${msg.texto}</p>
+                <small>${msg.fecha}</small>
+                <br><br>
+                <button onclick="eliminar(${i})">Eliminar</button>
+            </div>
+        `;
+    });
+}
+
+function publicar() {
+
+    const usuario = document.getElementById("usuario").value;
+    const mensaje = document.getElementById("mensaje").value;
+
+    if (!usuario || !mensaje) {
+        alert("Completa todos los campos");
+        return;
+    }
+
+    const mensajes = JSON.parse(localStorage.getItem("foroSolar")) || [];
+
+    mensajes.push({
+        usuario,
+        texto: mensaje,
+        fecha: new Date().toLocaleString()
+    });
+
+    localStorage.setItem("foroSolar", JSON.stringify(mensajes));
+
+    document.getElementById("mensaje").value = "";
+
+    cargarMensajes();
+}
+
+function eliminar(index) {
+
+    const clave = prompt("Contraseña de administrador:");
+
+    if (clave !== "SolarAdmin2026") {
+        alert("No autorizado");
+        return;
+    }
+
+    const mensajes = JSON.parse(localStorage.getItem("foroSolar")) || [];
+
+    mensajes.splice(index, 1);
+
+    localStorage.setItem("foroSolar", JSON.stringify(mensajes));
+
+    cargarMensajes();
+}
+
+cargarMensajes();
+
+</script>
+
+</body>
+</html>
